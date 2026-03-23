@@ -1,27 +1,31 @@
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { routing } from '@/lib/i18n';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import '../globals.css';
+
+const locales = ['ua', 'ru'];
 
 export default async function LocaleLayout({
   children,
-  params: { locale }
+  params
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  if (!routing.locales.includes(locale as any)) {
+  const { locale } = await params;
+  
+  if (!locales.includes(locale)) {
     notFound();
   }
-
-  const messages = await getMessages();
 
   return (
     <html lang={locale}>
       <body className="antialiased">
-        <NextIntlClientProvider messages={messages}>
+        <Header locale={locale} />
+        <main className="pt-16">
           {children}
-        </NextIntlClientProvider>
+        </main>
+        <Footer locale={locale} />
       </body>
     </html>
   );
