@@ -35,7 +35,7 @@ export class EmailProvider {
     const subject = `🔔 Новая заявка с сайта от ${data.name}`;
     
     const html = `
-      <h2>Новая заявка с сайта sanamyan-advokat.vercel.app</h2>
+      <h2>Новая заявка с сайта notguilty-legal.com</h2>
       <hr/>
       <p><strong>Имя:</strong> ${data.name}</p>
       <p><strong>Телефон:</strong> ${data.phone}</p>
@@ -49,7 +49,7 @@ export class EmailProvider {
     `;
 
     const text = `
-Новая заявка с сайта sanamyan-advokat.vercel.app
+Новая заявка с сайта notguilty-legal.com
 
 Имя: ${data.name}
 Телефон: ${data.phone}

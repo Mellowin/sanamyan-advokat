@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
 
 export async function OPTIONS(request: NextRequest) {
   const origin = request.headers.get('origin');
-  const allowedOrigin = origin === 'https://sanamyan-advokat.vercel.app' ||
+  const allowedOrigin = origin === 'https://notguilty-legal.com' ||
                         origin?.endsWith('.vercel.app') ||
                         origin?.startsWith('http://localhost')
                         ? origin || ''

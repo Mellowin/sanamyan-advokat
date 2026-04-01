@@ -60,10 +60,11 @@ export class SubmissionService {
     const telegramBreaker = createTelegramCircuitBreaker(this.redis);
 
     // Initialize providers
-    this.telegram = process.env.TELEGRAM_BOT_TOKEN
+    const chatIds = process.env.TELEGRAM_CHAT_IDS?.split(',').map(id => id.trim()) || [];
+    this.telegram = process.env.TELEGRAM_BOT_TOKEN && chatIds.length > 0
       ? new TelegramProvider({
           botToken: process.env.TELEGRAM_BOT_TOKEN,
-          chatIds: ['793675387', '435451269'],
+          chatIds,
           breaker: telegramBreaker,
         })
       : null;
@@ -88,7 +89,7 @@ export class SubmissionService {
     this.alertProvider = process.env.SENDGRID_API_KEY
       ? new SendGridProvider(
           process.env.SENDGRID_API_KEY,
-          process.env.ALERT_FROM_EMAIL || 'alerts@sanamyan-advokat.vercel.app',
+          process.env.ALERT_FROM_EMAIL || 'alerts@notguilty-legal.com',
           process.env.ALERT_EMAIL || process.env.FALLBACK_EMAIL || ''
         )
       : null;
