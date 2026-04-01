@@ -13,7 +13,8 @@ const content = {
       role: 'Адвокат, керівник практики',
       spec: 'Кримінальне право • Сімейне право • Спадкове право • ДТП',
       exp: '20+ років досвіду',
-      phone: '+38(098)720-83-01'
+      phone: '+38(098)720-83-01',
+      phone2: '+38(050)929-53-74'
     },
     kateryna: {
       name: 'Юсупова Катерина',
@@ -32,7 +33,8 @@ const content = {
       role: 'Адвокат, руководитель практики',
       spec: 'Уголовное право • Семейное право • Наследственное право • ДТП',
       exp: '20+ лет опыта',
-      phone: '+38(098)720-83-01'
+      phone: '+38(098)720-83-01',
+      phone2: '+38(050)929-53-74'
     },
     kateryna: {
       name: 'Юсупова Катерина',
@@ -68,12 +70,20 @@ export default function Team({ locale }: TeamProps) {
             <p className="text-amber-600 font-semibold text-center mb-4">{t.olga.role}</p>
             <p className="text-gray-600 text-center mb-2">{t.olga.spec}</p>
             <p className="text-gray-500 text-center text-sm mb-4">{t.olga.exp}</p>
-            <a 
-              href={`tel:${t.olga.phone.replace(/\D/g, '')}`}
-              className="block text-center text-slate-900 font-semibold hover:text-amber-600 transition-colors"
-            >
-              {t.olga.phone}
-            </a>
+            <div className="space-y-1">
+              <a 
+                href={`tel:${t.olga.phone.replace(/\D/g, '')}`}
+                className="block text-center text-slate-900 font-semibold hover:text-amber-600 transition-colors"
+              >
+                {t.olga.phone}
+              </a>
+              <a 
+                href={`tel:${t.olga.phone2.replace(/\D/g, '')}`}
+                className="block text-center text-slate-900 font-semibold hover:text-amber-600 transition-colors"
+              >
+                {t.olga.phone2}
+              </a>
+            </div>
           </div>
 
           {/* Юсупова Катерина */}

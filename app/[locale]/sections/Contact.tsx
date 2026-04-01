@@ -132,9 +132,11 @@ export default function Contact({ locale }: ContactProps) {
     }));
   };
 
-  // Номер телефона без + для ссылок
+  // Номера телефонов
   const phoneNumber = '380987208301';
   const phoneDisplay = '+38 (098) 720-83-01';
+  const phone2Number = '380509295374';
+  const phone2Display = '+38 (050) 929-53-74';
 
   // Копирование в буфер обмена (работает всегда)
   const copyToClipboard = (text: string) => {
@@ -187,10 +189,16 @@ export default function Contact({ locale }: ContactProps) {
                 <div className="text-sm text-gray-400">{t.phone}</div>
                 <button 
                   onClick={handlePhoneClick}
-                  className="text-xl font-bold hover:text-amber-500 transition-colors text-left"
+                  className="text-xl font-bold hover:text-amber-500 transition-colors text-left block"
                 >
                   {phoneDisplay}
                 </button>
+                <a 
+                  href={`tel:${phone2Number}`}
+                  className="text-xl font-bold hover:text-amber-500 transition-colors block"
+                >
+                  {phone2Display}
+                </a>
               </div>
             </div>
             
