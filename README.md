@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ю.Р.С.П. — Law Firm Website
 
-## Getting Started
+**Live:** [https://notguilty-legal.com](https://notguilty-legal.com)
 
-First, run the development server:
+Landing page with lead capture form and admin panel for a Kyiv-based law firm. Multilingual (UA/RU), responsive, with automated lead processing pipeline.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+![Tech Stack](https://img.shields.io/badge/Next.js-16-black?style=flat&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)
+![Tailwind](https://img.shields.io/badge/Tailwind-3.0-06B6D4?style=flat&logo=tailwindcss)
+![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat&logo=vercel)
+
+## Features
+
+- **Multilingual Landing Page** — Ukrainian/Russian with locale-based routing
+- **Lead Capture Form** — validation, spam protection (rate limiting), real-time processing
+- **Automated Notifications** — Telegram Bot API, email via Resend, Google Sheets storage
+- **Admin Panel** — JWT authentication with IP-binding for secure access
+- **Resilience** — Circuit Breaker pattern for handling external API failures
+- **Production Ready** — custom domain, SSL, DNS via Cloudflare + Vercel deployment
+
+## Tech Stack
+
+**Frontend:**
+- Next.js 16 (App Router)
+- TypeScript
+- Tailwind CSS
+- Responsive design
+
+**Backend:**
+- Next.js API Routes
+- JWT Authentication (jsonwebtoken)
+- Rate limiting (Upstash Redis)
+- Input validation & XSS protection
+
+**Integrations:**
+- Telegram Bot API (instant notifications)
+- Google Sheets API (lead storage)
+- Resend (email notifications)
+- Upstash Redis (rate limiting)
+
+**Infrastructure:**
+- Vercel (hosting & deployment)
+- Cloudflare (domain, DNS, SSL)
+
+## Project Structure
+
+```
+app/
+├── [locale]/           # i18n routing (ua, ru)
+│   ├── sections/       # Page sections (Hero, Services, Team, etc.)
+│   ├── api/            # API routes
+│   │   ├── contact/    # Form submission endpoint
+│   │   ├── admin/      # Admin auth endpoints
+│   │   └── ...
+│   └── page.tsx        # Main page
+├── lib/
+│   ├── auth/           # JWT utilities
+│   ├── providers/      # External API clients
+│   └── services/       # Business logic
+components/             # Shared components
+public/                 # Static assets
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Key Implementation Details
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Security
+- JWT tokens with 3-hour expiration and IP-binding
+- Rate limiting: 5 requests per 15 minutes per IP
+- Circuit Breaker for external API resilience
+- XSS protection and input validation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Form Processing Pipeline
+1. Client submits form → validation
+2. Rate limiting check (Redis)
+3. Parallel notifications:
+   - Telegram (instant)
+   - Google Sheets (CRM)
+   - Email (backup)
+4. Circuit Breaker handles failures gracefully
 
-## Learn More
+### Admin Access
+- `/admin` route with JWT-protected API
+- Token includes user IP — invalidated if IP changes
+- 3-hour session expiration
 
-To learn more about Next.js, take a look at the following resources:
+## Local Development
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Install dependencies
+npm install
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Set up environment variables
+# Copy .env.example to .env.local and fill in:
+# - JWT_SECRET
+# - TELEGRAM_BOT_TOKEN
+# - TELEGRAM_CHAT_ID
+# - UPSTASH_REDIS_REST_URL
+# - UPSTASH_REDIS_REST_TOKEN
+# - GOOGLE_SHEETS_ID
+# - GOOGLE_SERVICE_ACCOUNT_KEY
+# - RESEND_API_KEY
 
-## Deploy on Vercel
+# Run dev server
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Connect GitHub repo to Vercel
+2. Add environment variables in Vercel Dashboard
+3. Configure custom domain in Cloudflare
+4. Deploy on push to `main`
+
+## Screenshots
+
+*(Add screenshots of Hero section and Contact form)*
+
+## License
+
+Private — commercial project for Ю.Р.С.П. law firm.

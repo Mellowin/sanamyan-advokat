@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || process.env.ADMIN_PASSWORD || 'fallback-secret';
+const JWT_SECRET = process.env.JWT_SECRET!;
 const JWT_EXPIRES_IN = '3h'; // Токен живёт 3 часа
 
 export interface JWTPayload {

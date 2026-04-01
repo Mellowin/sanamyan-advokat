@@ -21,7 +21,7 @@ export default async function Home({
       <Team locale={locale} />
       <Services locale={locale} />
       <WhyUs locale={locale} />
-      <Reviews locale={locale} />
+
       <FAQ locale={locale} />
       <Contact locale={locale} />
     </main>
