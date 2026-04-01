@@ -1,5 +1,6 @@
 import Hero from './sections/Hero';
 import Stats from './sections/Stats';
+import Team from './sections/Team';
 import Services from './sections/Services';
 import WhyUs from './sections/WhyUs';
 import Reviews from './sections/Reviews';
@@ -17,6 +18,7 @@ export default async function Home({
     <main>
       <Hero locale={locale} />
       <Stats locale={locale} />
+      <Team locale={locale} />
       <Services locale={locale} />
       <WhyUs locale={locale} />
       <Reviews locale={locale} />

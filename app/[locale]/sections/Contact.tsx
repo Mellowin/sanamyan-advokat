@@ -15,10 +15,11 @@ const content = {
     address: 'Адреса',
     addressValue: 'м. Київ, вул. Парково-Сирецька (Тимофія Шамрила), 21',
     messengers: 'Мессенджери',
-    formTitle: 'Або залиште заявку — ми передзвонимо',
+    formTitle: 'Залиште заявку на консультацію',
+    formSubtitle: 'Коротко опишіть вашу ситуацію — ми зв\'яжемося з вами та підкажемо подальші кроки.',
     formName: 'Ваше ім\'я',
     formPhone: 'Телефон',
-    formMessage: 'Повідомлення',
+    formMessage: 'Опишіть ситуацію',
     formSubmit: 'Відправити',
     formSending: 'Відправка...',
     formSuccess: 'Дякуємо! Ми отримали заявку.',
@@ -33,10 +34,11 @@ const content = {
     address: 'Адрес',
     addressValue: 'г. Киев, ул. Парково-Сырецкая (Тимофея Шамрила), 21',
     messengers: 'Мессенджеры',
-    formTitle: 'Или оставьте заявку — мы перезвоним',
+    formTitle: 'Оставьте заявку на консультацию',
+    formSubtitle: 'Кратко опишите вашу ситуацию — мы свяжемся с вами и подскажем дальнейшие шаги.',
     formName: 'Ваше имя',
     formPhone: 'Телефон',
-    formMessage: 'Сообщение',
+    formMessage: 'Опишите ситуацию',
     formSubmit: 'Отправить',
     formSending: 'Отправка...',
     formSuccess: 'Спасибо! Мы получили заявку.',
@@ -54,15 +56,52 @@ export default function Contact({ locale }: ContactProps) {
     message: ''
   });
 
+  // Валидация телефона
+  const isValidPhone = (phone: string): boolean => {
+    const phoneRegex = /^[\d\+\-\(\)\s]+$/;
+    const digitsOnly = phone.replace(/\D/g, '');
+    return phoneRegex.test(phone) && digitsOnly.length >= 10;
+  };
+
+  // XSS проверка
+  const hasXss = (input: string): boolean => {
+    const xssPattern = /<script|javascript:|onerror=|onload=|<iframe|<object|<embed|alert\(|confirm\(|prompt\(/i;
+    return xssPattern.test(input);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Предотвращаем повторную отправку
+    if (status === 'sending') return;
+    
+    // Проверка телефона перед отправкой
+    if (!isValidPhone(formData.phone)) {
+      alert(locale === 'ua' 
+        ? 'Введіть коректний номер телефону (тільки цифри, +, -, ())' 
+        : 'Введите корректный номер телефона (только цифры, +, -, ())');
+      return;
+    }
+
+    // Проверка на XSS
+    if (hasXss(formData.name) || hasXss(formData.message)) {
+      alert(locale === 'ua' 
+        ? 'Виявлено заборонені символи' 
+        : 'Обнаружены запрещенные символы');
+      return;
+    }
+    
     setStatus('sending');
 
     try {
+      // Генерируем уникальный ID для заявки
+      const submissionId = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Submission-ID': submissionId,
         },
         body: JSON.stringify({
           ...formData,
@@ -73,6 +112,11 @@ export default function Contact({ locale }: ContactProps) {
       if (response.ok) {
         setStatus('success');
         setFormData({ name: '', phone: '', message: '' });
+      } else if (response.status === 429) {
+        // Rate limit exceeded
+        const data = await response.json();
+        alert(data.message || 'Забагато заявок. Спробуйте пізніше.');
+        setStatus('idle');
       } else {
         setStatus('error');
       }
@@ -90,6 +134,44 @@ export default function Contact({ locale }: ContactProps) {
 
   // Номер телефона без + для ссылок
   const phoneNumber = '380987208301';
+  const phoneDisplay = '+38 (098) 720-83-01';
+
+  // Копирование в буфер обмена (работает всегда)
+  const copyToClipboard = (text: string) => {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    
+    try {
+      document.execCommand('copy');
+      return true;
+    } catch (err) {
+      return false;
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  };
+
+  // Обработка клика по телефону
+  const handlePhoneClick = () => {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      // На мобильном — звоним
+      window.location.href = `tel:${phoneDisplay.replace(/\D/g, '')}`;
+    } else {
+      // На десктопе — копируем в буфер
+      const copied = copyToClipboard(phoneDisplay);
+      if (copied) {
+        alert(locale === 'ua' ? 'Номер скопійовано!' : 'Номер скопирован!');
+      } else {
+        alert(locale === 'ua' ? 'Не вдалося скопіювати' : 'Не удалось скопировать');
+      }
+    }
+  };
 
   return (
     <section id="contact" className="py-20 bg-slate-900 text-white">
@@ -103,7 +185,12 @@ export default function Contact({ locale }: ContactProps) {
               <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-slate-900 text-2xl">📞</div>
               <div>
                 <div className="text-sm text-gray-400">{t.phone}</div>
-                <a href="tel:+380987208301" className="text-xl font-bold hover:text-amber-500 transition-colors">+38 (098) 720-83-01</a>
+                <button 
+                  onClick={handlePhoneClick}
+                  className="text-xl font-bold hover:text-amber-500 transition-colors text-left"
+                >
+                  {phoneDisplay}
+                </button>
               </div>
             </div>
             
@@ -166,7 +253,8 @@ export default function Contact({ locale }: ContactProps) {
           </div>
 
           <div className="bg-white text-slate-900 p-8 rounded-2xl">
-            <h3 className="text-2xl font-bold mb-6">{t.formTitle}</h3>
+            <h3 className="text-2xl font-bold mb-2">{t.formTitle}</h3>
+            <p className="text-gray-600 mb-6">{t.formSubtitle}</p>
             
             {status === 'success' ? (
               <div className="text-center py-8 text-green-600 font-semibold text-lg">
@@ -202,6 +290,8 @@ export default function Contact({ locale }: ContactProps) {
                   placeholder={t.formPhone}
                   required
                   disabled={status === 'sending'}
+                  pattern="[\d\+\-\(\)\s]{10,}"
+                  title={locale === 'ua' ? 'Тільки цифри, +, -, ()' : 'Только цифры, +, -, ()'}
                   className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none disabled:bg-gray-100"
                 />
                 <textarea 
