@@ -5,13 +5,13 @@ interface StatsProps {
 const stats = {
   ua: [
     { number: '20+', label: 'років досвіду' },
-    { number: '1000+', label: 'виграних справ' },
+    { number: '5000+', label: 'клієнтів' },
     { number: '24/7', label: 'підтримка' },
     { number: '🔒', label: 'конфіденційний супровід' }
   ],
   ru: [
     { number: '20+', label: 'лет опыта' },
-    { number: '1000+', label: 'выигранных дел' },
+    { number: '5000+', label: 'клиентов' },
     { number: '24/7', label: 'поддержка' },
     { number: '🔒', label: 'конфиденциальное сопровождение' }
   ]
