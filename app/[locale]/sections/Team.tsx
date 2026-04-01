@@ -20,7 +20,7 @@ const content = {
       name: 'Юсупова Катерина',
       role: 'Адвокат',
       spec: 'Кримінальне право • Військове право • ДТП',
-      exp: '',
+      exp: '25+ років досвіду',
       phone: '+38(067)586-07-10',
       email: 'yusupova_lawyer@ukr.net'
     }
@@ -40,7 +40,7 @@ const content = {
       name: 'Юсупова Катерина',
       role: 'Адвокат',
       spec: 'Уголовное право • Военное право • ДТП',
-      exp: '',
+      exp: '25+ лет опыта',
       phone: '+38(067)586-07-10',
       email: 'yusupova_lawyer@ukr.net'
     }
