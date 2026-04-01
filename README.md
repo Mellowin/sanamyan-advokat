@@ -1,14 +1,16 @@
-# Ю.Р.С.П. — Law Firm Website / Сайт адвокатського об'єднання
+# Law Firm Website — Ю.Р.С.П.
 
-**Live:** [https://notguilty-legal.com](https://notguilty-legal.com)
+**Live:** [https://notguilty-legal.com](https://notguilty-legal.com) | [Українська версія](./README_UA.md)
 
 Landing page with lead capture form and admin panel for a Kyiv-based law firm. Multilingual (UA/RU), responsive, with automated lead processing pipeline.
 
----
+![Tech Stack](https://img.shields.io/badge/Next.js-16-black?style=flat&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)
+![Tailwind](https://img.shields.io/badge/Tailwind-3.0-06B6D4?style=flat&logo=tailwindcss)
+![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat&logo=vercel)
 
-## English
+## Features
 
-### Features
 - **Multilingual Landing Page** — Ukrainian/Russian with locale-based routing
 - **Lead Capture Form** — validation, spam protection (rate limiting), real-time processing
 - **Automated Notifications** — Telegram Bot API, email via Resend, Google Sheets storage
@@ -16,33 +18,31 @@ Landing page with lead capture form and admin panel for a Kyiv-based law firm. M
 - **Resilience** — Circuit Breaker pattern for handling external API failures
 - **Production Ready** — custom domain, SSL, DNS via Cloudflare + Vercel deployment
 
-### Tech Stack
-**Frontend:** Next.js 16, TypeScript, Tailwind CSS  
-**Backend:** Next.js API Routes, JWT Auth, Upstash Redis  
-**Integrations:** Telegram Bot API, Google Sheets, Resend  
-**Infrastructure:** Vercel, Cloudflare
+## Tech Stack
 
----
+**Frontend:**
+- Next.js 16 (App Router)
+- TypeScript
+- Tailwind CSS
+- Responsive design
 
-## Українська
+**Backend:**
+- Next.js API Routes
+- JWT Authentication (jsonwebtoken)
+- Rate limiting (Upstash Redis)
+- Input validation & XSS protection
 
-### Можливості
-- **Багатомовний лендинг** — українська/російська з роутингом за локаллю
-- **Форма захоплення лідів** — валідація, захист від спаму (rate limiting), real-time обробка
-- **Автоматичні сповіщення** — Telegram Bot API, email через Resend, зберігання в Google Sheets
-- **Адмін-панель** — JWT-аутентифікація з IP-binding для безпечного доступу
-- **Відказостійкість** — Circuit Breaker для обробки збоїв зовнішніх API
-- **Production Ready** — кастомний домен, SSL, DNS через Cloudflare + деплой на Vercel
+**Integrations:**
+- Telegram Bot API (instant notifications)
+- Google Sheets API (lead storage)
+- Resend (email notifications)
+- Upstash Redis (rate limiting)
 
-### Стек технологій
-**Frontend:** Next.js 16, TypeScript, Tailwind CSS  
-**Backend:** Next.js API Routes, JWT Auth, Upstash Redis  
-**Інтеграції:** Telegram Bot API, Google Sheets, Resend  
-**Інфраструктура:** Vercel, Cloudflare
+**Infrastructure:**
+- Vercel (hosting & deployment)
+- Cloudflare (domain, DNS, SSL)
 
----
-
-## Project Structure / Структура проєкту
+## Project Structure
 
 ```
 app/
@@ -61,30 +61,29 @@ components/             # Shared components
 public/                 # Static assets
 ```
 
----
+## Key Implementation Details
 
-## Key Implementation Details / Ключові деталі реалізації
-
-### Security / Безпека
+### Security
 - JWT tokens with 3-hour expiration and IP-binding
 - Rate limiting: 5 requests per 15 minutes per IP
 - Circuit Breaker for external API resilience
 - XSS protection and input validation
 
-### Form Processing Pipeline / Пайплайн обробки форм
+### Form Processing Pipeline
 1. Client submits form → validation
 2. Rate limiting check (Redis)
-3. Parallel notifications: Telegram (instant), Google Sheets (CRM), Email (backup)
+3. Parallel notifications:
+   - Telegram (instant)
+   - Google Sheets (CRM)
+   - Email (backup)
 4. Circuit Breaker handles failures gracefully
 
-### Admin Access / Доступ до адмінки
+### Admin Access
 - `/admin` route with JWT-protected API
 - Token includes user IP — invalidated if IP changes
 - 3-hour session expiration
 
----
-
-## Local Development / Локальна розробка
+## Local Development
 
 ```bash
 # Install dependencies
@@ -105,29 +104,22 @@ npm install
 npm run dev
 ```
 
----
-
-## Deployment / Деплой
+## Deployment
 
 1. Connect GitHub repo to Vercel
 2. Add environment variables in Vercel Dashboard
 3. Configure custom domain in Cloudflare
 4. Deploy on push to `main`
 
----
+## Other Files
 
-## Other Files / Інші файли
+| File | Purpose |
+|------|---------|
+| `AGENTS.md` | Next.js agent rules for AI coding assistants |
+| `CLAUDE.md` | Reference to AGENTS.md for Claude AI |
+| `.env.example` | Example environment variables |
+| `README_UA.md` | [Українська версія документації](./README_UA.md) |
 
-| File | Purpose / Призначення |
-|------|----------------------|
-| `AGENTS.md` | Next.js agent rules for AI coding assistants / Правила для AI-асистентів кодування |
-| `CLAUDE.md` | Reference to AGENTS.md for Claude AI / Посилання на AGENTS.md для Claude AI |
-| `GOOGLE_SHEETS_SETUP.md` | Setup guide for Google Sheets integration / Інструкція налаштування Google Sheets |
-| `RESEND_SETUP.md` | Setup guide for Resend email service / Інструкція налаштування сервісу Resend |
-| `.env.example` | Example environment variables / Приклад змінних оточення |
-
----
-
-## License / Ліцензія
+## License
 
 Private — commercial project for Ю.Р.С.П. law firm.
