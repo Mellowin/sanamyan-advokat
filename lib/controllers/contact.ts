@@ -24,6 +24,7 @@ const WINDOW_SECONDS = 3600;
 function isAllowedOrigin(origin: string | null): boolean {
   if (!origin) return true;
   return origin === 'https://notguilty-legal.com' ||
+         origin === 'https://www.notguilty-legal.com' ||
          origin.endsWith('.vercel.app') ||
          origin.startsWith('http://localhost');
 }
