@@ -137,6 +137,8 @@ export default function Contact({ locale }: ContactProps) {
   const phoneDisplay = '+38 (098) 720-83-01';
   const phone2Number = '380509295374';
   const phone2Display = '+38 (050) 929-53-74';
+  const phone3Number = '380675860710';
+  const phone3Display = '+38 (067) 586-07-10';
 
   // Копирование в буфер обмена (работает всегда)
   const copyToClipboard = (text: string) => {
@@ -198,6 +200,12 @@ export default function Contact({ locale }: ContactProps) {
                   className="text-xl font-bold hover:text-amber-500 transition-colors block"
                 >
                   {phone2Display}
+                </a>
+                <a 
+                  href={`tel:${phone3Number}`}
+                  className="text-xl font-bold hover:text-amber-500 transition-colors block"
+                >
+                  {phone3Display}
                 </a>
               </div>
             </div>
