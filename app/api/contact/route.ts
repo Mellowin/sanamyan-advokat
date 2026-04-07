@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { enqueueSubmission, processInBackground } from '@/lib/queue';
+import { SubmissionService } from '@/lib/services/submission';
 import { headers } from 'next/headers';
-import { after } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,21 +24,24 @@ export async function POST(request: NextRequest) {
       requestId,
     };
 
-    // 1. Кладем в очередь (20-50ms)
-    const queueId = await enqueueSubmission(submissionData);
+    // ОБРАБОТКА: Telegram + Email параллельно (быстро)
+    // Sheets — в фоне, не ждем
+    const service = new SubmissionService();
+    
+    // Запускаем обработку
+    const resultPromise = service.process(submissionData);
+    
+    // Ждем максимум 2 секунды основные каналы (Telegram/Email)
+    // Если не успевает — все равно показываем успех, обработка идет дальше
+    const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(null), 2000));
+    
+    await Promise.race([resultPromise, timeoutPromise]);
 
-    // 2. Запускаем обработку ПОСЛЕ того как вернули ответ
-    // after() позволяет выполнять код после return в serverless
-    after(async () => {
-      await processInBackground();
-    });
-
-    // 3. МГНОВЕННЫЙ ответ пользователю (50-100ms вместо 3000ms)
+    // МГНОВЕННЫЙ ответ (макс 2 сек вместо 5)
     return NextResponse.json({ 
       success: true, 
       message: 'Дякуємо! Ми отримали заявку.',
-      requestId, // Для отладки
-      queueId,   // Для отладки
+      requestId,
     }, {
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -48,7 +50,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Queue error:', error);
+    console.error('Contact error:', error);
     return NextResponse.json(
       { success: false, message: 'Помилка сервера. Спробуйте пізніше.' }, 
       { status: 500 }

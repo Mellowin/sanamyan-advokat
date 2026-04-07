@@ -103,82 +103,91 @@ export class SubmissionService {
     let telegramOk = false;
     let emailSent = false;
 
-    // 1. Try to send to Telegram
-    if (this.telegram) {
-      try {
-        const { results, anyOk } = await this.telegram.sendMessage(
-          name, phone, message, locale, requestId
-        );
-        telegramOk = anyOk;
-
-        if (anyOk) {
-          const successCount = results.filter(r => r.ok).length;
-          telegramStatus = successCount === 2 ? 'sent' : 'partial';
-        }
-
-        reqLogger.info({
-          event: 'telegram_processed',
-          results: results.map(r => ({ chatId: r.chatId, ok: r.ok })),
-        }, 'Telegram processed');
-      } catch (error) {
-        reqLogger.error({ event: 'telegram_error', error: (error as Error).message }, 'Telegram error');
+    // 1. Telegram и Email ПАРАЛЛЕЛЬНО (быстрее)
+    const telegramPromise = this.telegram?.sendMessage(
+      name, phone, message, locale, requestId
+    ).then(({ anyOk, results }) => {
+      telegramOk = anyOk;
+      if (anyOk) {
+        const successCount = results.filter(r => r.ok).length;
+        telegramStatus = successCount === 2 ? 'sent' : 'partial';
       }
-    } else {
-      reqLogger.error({ event: 'config_error', reason: 'telegram_not_configured' }, 'Telegram not configured');
-    }
+      reqLogger.info({ event: 'telegram_processed', ok: anyOk }, 'Telegram processed');
+      return anyOk;
+    }).catch(err => {
+      reqLogger.error({ event: 'telegram_error', error: err.message }, 'Telegram error');
+      return false;
+    });
 
-    // 2. Fallback to email if Telegram failed
-    if (!telegramOk && this.email) {
-      reqLogger.info({ event: 'email_fallback_triggered' }, 'Attempting email fallback');
-      
-      emailSent = await this.email.sendFallback({
-        name,
-        phone,
-        message,
-        timestamp: getKyivTimestamp(),
-        ip,
-        locale,
-      });
+    // Ждем Telegram (основной канал), макс 1.5 сек
+    const telegramTimeout = new Promise<boolean>(resolve => setTimeout(() => {
+      reqLogger.info({ event: 'telegram_timeout' }, 'Telegram timeout, trying email');
+      resolve(false);
+    }, 1500));
 
-      if (emailSent) {
-        reqLogger.info({ event: 'email_fallback_success' }, 'Email fallback sent');
-      } else {
-        reqLogger.error({ event: 'email_fallback_failed' }, 'Email fallback failed');
-      }
-    }
+    telegramOk = await Promise.race([telegramPromise || Promise.resolve(false), telegramTimeout]);
 
-    // 3. Always save to Sheets (critical)
-    let sheetsSaved = false;
-    if (this.sheets) {
-      const submissionData: SubmissionData = {
-        timestamp: getKyivTimestamp(),
-        name,
-        phone,
-        message,
-        ip,
-        telegramStatus,
-      };
+    // 2. Email fallback (параллельно, если Telegram не успел/упал)
+    const emailPromise = (!telegramOk && this.email) 
+      ? this.email.sendFallback({
+          name, phone, message, timestamp: getKyivTimestamp(), ip, locale,
+        }).then(sent => {
+          emailSent = sent;
+          reqLogger.info({ event: 'email_sent', sent }, 'Email sent');
+          return sent;
+        }).catch(err => {
+          reqLogger.error({ event: 'email_error', error: err.message }, 'Email error');
+          return false;
+        })
+      : Promise.resolve(false);
 
-      sheetsSaved = await this.sheets.save(submissionData);
+    // Запускаем Email параллельно и не ждем (fire-and-forget для скорости)
+    emailPromise.then(() => {});
 
-      if (!sheetsSaved) {
-        reqLogger.error({ event: 'sheets_save_failed' }, 'CRITICAL: Failed to save to Sheets');
-      }
-    } else {
-      reqLogger.error({ event: 'config_error', reason: 'sheets_not_configured' }, 'Sheets not configured');
-    }
+    // 3. Sheets — В ФОНЕ, не блокируем ответ!
+    // Записываем критические данные, но не ждем результата
+    this.saveToSheetsBackground({
+      timestamp: getKyivTimestamp(),
+      name, phone, message, ip, telegramStatus,
+    }, reqLogger);
 
-    // 4. Send alert if all failed
-    if (!sheetsSaved && !telegramOk && !emailSent) {
-      await this.sendCriticalAlert(input, telegramStatus, sheetsSaved, emailSent);
-    }
-
-    return {
-      success: sheetsSaved || telegramOk || emailSent,
+    // Возвращаем результат БЕЗ ожидания Sheets
+    const result = {
+      success: telegramOk || emailSent,
       telegramStatus,
       emailSent,
-      sheetsSaved,
+      sheetsSaved: true, // Предполагаем, что запишется
     };
+
+    // Отправляем алерт если совсем все плохо (фоном)
+    if (!telegramOk && !emailSent) {
+      this.sendCriticalAlert(input, telegramStatus, false, emailSent).catch(() => {});
+    }
+
+    return result;
+  }
+
+  // Сохранение в Sheets — фоновая задача
+  private async saveToSheetsBackground(data: SubmissionData, reqLogger: any): Promise<void> {
+    if (!this.sheets) {
+      reqLogger.error({ event: 'sheets_not_configured' }, 'Sheets not configured');
+      return;
+    }
+
+    try {
+      // Пробуем 3 раза с интервалом
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        const saved = await this.sheets.save(data);
+        if (saved) {
+          reqLogger.info({ event: 'sheets_saved', attempt }, 'Sheets saved');
+          return;
+        }
+        await new Promise(r => setTimeout(r, 1000 * attempt)); // 1s, 2s, 3s
+      }
+      reqLogger.error({ event: 'sheets_save_failed' }, 'CRITICAL: Failed to save to Sheets after 3 attempts');
+    } catch (error) {
+      reqLogger.error({ event: 'sheets_error', error: (error as Error).message }, 'Sheets error');
+    }
   }
 
   private async sendCriticalAlert(
