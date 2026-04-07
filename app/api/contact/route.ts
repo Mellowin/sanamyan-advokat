@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { enqueueSubmission, processInBackground } from '@/lib/queue';
 import { headers } from 'next/headers';
+import { after } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,9 +28,11 @@ export async function POST(request: NextRequest) {
     // 1. Кладем в очередь (20-50ms)
     const queueId = await enqueueSubmission(submissionData);
 
-    // 2. Запускаем обработку в фоне (не ждем!)
-    // Это позволяет вернуть ответ сразу, а обработка пойдет параллельно
-    processInBackground();
+    // 2. Запускаем обработку ПОСЛЕ того как вернули ответ
+    // after() позволяет выполнять код после return в serverless
+    after(async () => {
+      await processInBackground();
+    });
 
     // 3. МГНОВЕННЫЙ ответ пользователю (50-100ms вместо 3000ms)
     return NextResponse.json({ 
