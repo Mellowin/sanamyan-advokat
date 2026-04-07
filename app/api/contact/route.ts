@@ -5,7 +5,7 @@ import { headers } from 'next/headers';
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
-    const headersList = headers();
+    const headersList = await headers();
     
     // Получаем IP
     const forwardedFor = headersList.get('x-forwarded-for');
