@@ -14,7 +14,6 @@ const content = {
     nav: [
       { name: 'Послуги', href: '#services' },
       { name: 'Чому ми', href: '#whyus' },
-      { name: 'Відгуки', href: '#reviews' },
       { name: 'FAQ', href: '#faq' },
       { name: 'Контакти', href: '#contact' },
     ],
@@ -24,7 +23,6 @@ const content = {
     nav: [
       { name: 'Услуги', href: '#services' },
       { name: 'Почему мы', href: '#whyus' },
-      { name: 'Отзывы', href: '#reviews' },
       { name: 'FAQ', href: '#faq' },
       { name: 'Контакты', href: '#contact' },
     ],
