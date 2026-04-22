@@ -41,7 +41,7 @@ export default function Services({ locale }: ServicesProps) {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {t.services.map((service, index) => (
             <div key={index} className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
-              <img src={service.icon} alt="" className="w-12 h-12 mb-4 object-contain" />
+              <img src={service.icon} alt="" className="w-16 h-16 mb-4 object-contain" />
               <h4 className="text-xl font-bold text-slate-900 mb-3">{service.title}</h4>
               <ul className="space-y-1.5">
                 {service.items.map((item, i) => (
