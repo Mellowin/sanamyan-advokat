@@ -188,7 +188,7 @@ export default function Contact({ locale }: ContactProps) {
         <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
           <div className="space-y-8">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-slate-900 text-2xl">📞</div>
+              <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-slate-900"><img src="/icons/phone.png" alt="" className="w-6 h-6 object-contain" /></div>
               <div>
                 <div className="text-sm text-gray-400">{t.phone}</div>
                 <button 
@@ -219,7 +219,7 @@ export default function Contact({ locale }: ContactProps) {
             </div>
             
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-slate-900 text-2xl">✉️</div>
+              <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-slate-900"><img src="/icons/email.png" alt="" className="w-6 h-6 object-contain" /></div>
               <div>
                 <div className="text-sm text-gray-400">{t.email}</div>
                 <a href="mailto:OSanamyan@ukr.net" className="text-xl font-bold hover:text-amber-500 transition-colors">OSanamyan@ukr.net</a>
@@ -227,7 +227,7 @@ export default function Contact({ locale }: ContactProps) {
             </div>
             
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-slate-900 text-2xl">📍</div>
+              <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-slate-900"><img src="/icons/location.png" alt="" className="w-6 h-6 object-contain" /></div>
               <div>
                 <div className="text-sm text-gray-400">{t.address}</div>
                 <div className="text-xl font-bold">{t.addressValue}</div>
@@ -243,30 +243,30 @@ export default function Contact({ locale }: ContactProps) {
                   href={`https://t.me/+${phoneNumber}`}
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-12 h-12 bg-[#0088cc] rounded-full flex items-center justify-center text-white font-bold text-xs hover:scale-110 transition-transform shadow-lg"
+                  className="w-12 h-12 bg-[#0088cc] rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
                   title="Telegram"
                 >
-                  TG
+                  <img src="/icons/telegram.png" alt="Telegram" className="w-6 h-6 object-contain" />
                 </a>
                 {/* WhatsApp */}
                 <a 
                   href={`https://wa.me/${phoneNumber}`}
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-12 h-12 bg-[#25D366] rounded-full flex items-center justify-center text-white font-bold text-xs hover:scale-110 transition-transform shadow-lg"
+                  className="w-12 h-12 bg-[#25D366] rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
                   title="WhatsApp"
                 >
-                  WA
+                  <img src="/icons/whatsapp.png" alt="WhatsApp" className="w-6 h-6 object-contain" />
                 </a>
                 {/* Viber */}
                 <a 
                   href={`viber://chat?number=%2B${phoneNumber}`}
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-12 h-12 bg-[#7360f2] rounded-full flex items-center justify-center text-white font-bold text-xs hover:scale-110 transition-transform shadow-lg"
+                  className="w-12 h-12 bg-[#7360f2] rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
                   title="Viber"
                 >
-                  VB
+                  <img src="/icons/viber.png" alt="Viber" className="w-6 h-6 object-contain" />
                 </a>
               </div>
             </div>
