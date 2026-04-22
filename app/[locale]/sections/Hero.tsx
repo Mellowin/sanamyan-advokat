@@ -192,7 +192,7 @@ export default function Hero({ locale }: HeroProps) {
                         <div className="bg-slate-800 rounded-2xl p-2 border border-slate-700">
                             <div className="aspect-[3/4] rounded-xl overflow-hidden">
                                 <img
-                                    src="/Sanamyan_Olga.jpg"
+                                    src="/Sanamyan_Olga.png"
                                     alt={locale === 'ua' ? 'Адвокат' : 'Адвокат'}
                                     className="w-full h-full object-cover"
                                 />
