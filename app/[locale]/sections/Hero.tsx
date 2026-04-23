@@ -189,8 +189,8 @@ export default function Hero({ locale }: HeroProps) {
                         </div>
                     </div>
                     <div className="hidden md:block">
-                        <div className="bg-slate-800 rounded-2xl p-2 border border-slate-700">
-                            <div className="aspect-[3/4] rounded-xl overflow-hidden">
+                        <div className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
+                            <div className="aspect-[2/3]">
                                 <img
                                     src="/Sanamyan_Yusupova.png"
                                     alt={locale === 'ua' ? 'Адвокат' : 'Адвокат'}
