@@ -29,7 +29,7 @@ export default function Stats({ locale }: StatsProps) {
               {item.image ? (
                 <img src={item.image} alt="" className="h-20 md:h-24 w-auto mx-auto mb-2 object-contain" />
               ) : (
-                <div className="text-4xl md:text-5xl font-bold mb-2">{item.number}</div>
+                <div className="text-7xl md:text-8xl leading-none font-bold mb-2">{item.number}</div>
               )}
               {item.label && <div className="font-medium opacity-80">{item.label}</div>}
             </div>
