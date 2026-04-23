@@ -90,7 +90,7 @@ export default function Team({ locale }: TeamProps) {
           <div className="bg-slate-50 rounded-2xl p-8 border border-gray-200">
             <div className="aspect-[3/4] max-w-sm mx-auto rounded-xl overflow-hidden bg-slate-200 mb-6">
               <img
-                src="/Yusupova_Katerina.png"
+                src="/Yusupova_Katerina.jpg"
                 alt={t.kateryna.name}
                 className="w-full h-full object-cover"
               />
