@@ -7,13 +7,13 @@ const stats = {
     { number: '20+', label: 'років досвіду' },
     { number: '5000+', label: 'клієнтів' },
     { number: '24/7', label: 'підтримка' },
-    { image: '/icons/confidentiality.png' }
+    { image: '/icons/confidentiality.png', label: 'конфіденційний супровід' }
   ],
   ru: [
     { number: '20+', label: 'лет опыта' },
     { number: '5000+', label: 'клиентов' },
     { number: '24/7', label: 'поддержка' },
-    { image: '/icons/confidentiality.png' }
+    { image: '/icons/confidentiality.png', label: 'конфиденциальное сопровождение' }
   ]
 };
 
