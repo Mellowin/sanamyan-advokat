@@ -8,6 +8,7 @@ Landing page with lead capture form and admin panel for a Kyiv-based law firm. M
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)
 ![Tailwind](https://img.shields.io/badge/Tailwind-3.0-06B6D4?style=flat&logo=tailwindcss)
 ![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat&logo=vercel)
+![CI](https://github.com/Mellowin/sanamyan-advokat/actions/workflows/ci.yml/badge.svg)
 
 ## Features
 
