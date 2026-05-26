@@ -34,12 +34,15 @@ yarn-error.log*
 .env*
 
 # vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 
+# vercel
 .vercel
+
+# local learning/test files
+test*.html
+TEST*.html
 
 sheet-id*.txt
