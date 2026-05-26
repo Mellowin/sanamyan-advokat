@@ -141,7 +141,7 @@ export default function Hero({ locale }: HeroProps) {
                         <div className="mb-4 text-amber-400 font-semibold tracking-wide uppercase text-sm">
                             {locale === 'ua' ? 'Правовий захист' : 'Правовая защита'}
                         </div>
-                        <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight break-words">
                             {t.title}
                         </h1>
                         <p className="text-2xl text-gray-300 mb-4">
@@ -150,7 +150,7 @@ export default function Hero({ locale }: HeroProps) {
                         <p className="text-gray-400 mb-8 text-lg">
                             {t.description}
                         </p>
-                        <div className="flex gap-3 sm:gap-4">
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                             <button
                                 onClick={() => {
                                     setShowForm(true);
