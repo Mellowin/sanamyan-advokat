@@ -29,6 +29,7 @@ export default function AdminPage() {
     if (savedToken) {
       validateToken(savedToken);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const validateToken = async (t: string) => {
@@ -74,7 +75,7 @@ export default function AdminPage() {
       setToken(data.token);
       setIsLoggedIn(true);
       fetchSubmissions(data.token);
-    } catch (err) {
+    } catch {
       setError('Ошибка соединения');
     } finally {
       setLoading(false);
@@ -105,7 +106,7 @@ export default function AdminPage() {
       
       const data = await response.json();
       setSubmissions(data.submissions);
-    } catch (err) {
+    } catch {
       setError('Ошибка соединения');
     } finally {
       setLoading(false);

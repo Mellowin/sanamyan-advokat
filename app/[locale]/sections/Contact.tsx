@@ -120,7 +120,7 @@ export default function Contact({ locale }: ContactProps) {
       } else {
         setStatus('error');
       }
-    } catch (error) {
+    } catch {
       setStatus('error');
     }
   };
@@ -154,7 +154,7 @@ export default function Contact({ locale }: ContactProps) {
     try {
       document.execCommand('copy');
       return true;
-    } catch (err) {
+    } catch {
       return false;
     } finally {
       document.body.removeChild(textarea);

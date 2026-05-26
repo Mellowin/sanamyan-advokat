@@ -121,7 +121,7 @@ export default function Hero({ locale }: HeroProps) {
             } else {
                 setStatus('error');
             }
-        } catch (error) {
+        } catch {
             setStatus('error');
         }
     };
@@ -176,7 +176,7 @@ export default function Hero({ locale }: HeroProps) {
                                         try {
                                             document.execCommand('copy');
                                             alert(locale === 'ua' ? 'Номер скопійовано!' : 'Номер скопирован!');
-                                        } catch (err) {
+                                        } catch {
                                             alert(locale === 'ua' ? 'Не вдалося скопіювати' : 'Не удалось скопировать');
                                         }
                                         document.body.removeChild(textarea);

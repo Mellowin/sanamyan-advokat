@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SubmissionService, ProcessSubmissionInput } from '@/lib/services/submission';
+import { SubmissionService } from '@/lib/services/submission';
 import { Redis } from '@upstash/redis';
 import logger, { createRequestLogger, logAPIRequest, logAPIResponse } from '@/lib/logger';
 

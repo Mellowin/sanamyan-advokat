@@ -37,7 +37,7 @@ describe('Rate Limiting', () => {
         }
         
         return { allowed: true, remaining: MAX_REQUESTS - count, redisAvailable: true };
-      } catch (error) {
+      } catch {
         return { allowed: true, remaining: 999, redisAvailable: false };
       }
     }

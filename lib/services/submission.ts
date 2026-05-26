@@ -1,8 +1,8 @@
 import { TelegramProvider } from '@/lib/providers/telegram';
 import { SheetsProvider, SubmissionData } from '@/lib/providers/sheets';
-import { EmailProvider, EmailData } from '@/lib/providers/email';
+import { EmailProvider } from '@/lib/providers/email';
 import { SendGridProvider } from '@/lib/providers/sendgrid';
-import { createTelegramCircuitBreaker, CircuitBreaker } from '@/lib/providers/circuit-breaker';
+import { createTelegramCircuitBreaker } from '@/lib/providers/circuit-breaker';
 import { Redis } from '@upstash/redis';
 import logger, { createRequestLogger } from '@/lib/logger';
 
@@ -51,7 +51,7 @@ export class SubmissionService {
           url: process.env.UPSTASH_REDIS_REST_URL,
           token: process.env.UPSTASH_REDIS_REST_TOKEN,
         });
-      } catch (error) {
+      } catch {
         logger.error({ event: 'redis_init_error' }, 'Failed to initialize Redis');
       }
     }
