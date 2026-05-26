@@ -1,0 +1,18 @@
+name: Keep Redis Alive
+
+on:
+  schedule:
+    # Every day at 06:00 UTC (09:00 Kyiv time)
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health endpoint
+        run: |
+          echo "Pinging /api/health to keep Redis active..."
+          RESPONSE=$(curl -sfS "https://notguilty-legal.com/api/health")
+          echo "$RESPONSE"
+          echo "$RESPONSE" | grep -q '"redis":true' && echo "✅ Redis is alive" || echo "⚠️ Redis may be down"
