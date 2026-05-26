@@ -60,7 +60,9 @@ export class SubmissionService {
     const telegramBreaker = createTelegramCircuitBreaker(this.redis);
 
     // Initialize providers
-    const chatIds = process.env.TELEGRAM_CHAT_IDS?.split(',').map(id => id.trim()) || [];
+    const chatIds = process.env.TELEGRAM_CHAT_IDS?.split(',').map(id => id.trim())
+      || process.env.TELEGRAM_CHAT_ID?.split(',').map(id => id.trim())
+      || [];
     this.telegram = process.env.TELEGRAM_BOT_TOKEN && chatIds.length > 0
       ? new TelegramProvider({
           botToken: process.env.TELEGRAM_BOT_TOKEN,
