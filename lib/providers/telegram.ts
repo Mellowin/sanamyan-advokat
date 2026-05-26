@@ -140,10 +140,14 @@ ${message || 'Не вказано'}
       }
 
       return { chatId, ok: false, error: data.description || 'Max retries reached' };
-    } catch (error: any) {
+    } catch (error) {
       clearTimeout(timeoutId);
 
-      if (error.name === 'AbortError' || error.message?.includes('fetch')) {
+      const errorMessage = error instanceof Error ? error.message : '';
+      const isAbort = error instanceof Error && error.name === 'AbortError';
+      const isFetch = errorMessage.includes('fetch');
+
+      if (isAbort || isFetch) {
         // Только 1 retry на timeout/network error
         if (attempt < 2) {
           await new Promise(resolve => setTimeout(resolve, 500));
@@ -152,11 +156,11 @@ ${message || 'Не вказано'}
         return {
           chatId,
           ok: false,
-          error: error.name === 'AbortError' ? 'Timeout after 2s' : 'Network error',
+          error: isAbort ? 'Timeout after 2s' : 'Network error',
         };
       }
 
-      return { chatId, ok: false, error: error.message || 'Unknown error' };
+      return { chatId, ok: false, error: errorMessage || 'Unknown error' };
     }
   }
 

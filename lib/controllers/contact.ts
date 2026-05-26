@@ -155,7 +155,8 @@ export async function handleContactRequest(request: NextRequest): Promise<NextRe
 
     // Parse body
     const body = await request.json();
-    let { name, phone, message, locale } = body;
+    let { name, message } = body;
+    const { phone, locale } = body;
 
     // Validation
     if (checkXss(name) || checkXss(message || '')) {

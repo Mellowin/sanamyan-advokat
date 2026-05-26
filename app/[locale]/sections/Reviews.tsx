@@ -32,7 +32,7 @@ export default function Reviews({ locale }: ReviewsProps) {
           {t.reviews.map((review, index) => (
             <div key={index} className="bg-gray-50 p-6 rounded-xl border border-gray-200">
               <div className="text-amber-500 text-2xl mb-4">★★★★★</div>
-              <p className="text-gray-700 mb-4 italic">"{review.text}"</p>
+              <p className="text-gray-700 mb-4 italic">{'"'}{review.text}{'"'}</p>
               <div className="font-bold text-slate-900">{review.name}</div>
               <div className="text-sm text-gray-500">{review.service}</div>
             </div>
