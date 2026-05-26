@@ -119,6 +119,8 @@ export default function Hero({ locale }: HeroProps) {
                 alert(data.message || 'Забагато заявок. Спробуйте пізніше.');
                 setStatus('idle');
             } else {
+                const errorText = await response.text();
+                console.error('Hero API error:', response.status, errorText);
                 setStatus('error');
             }
         } catch {
