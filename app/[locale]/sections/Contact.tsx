@@ -118,8 +118,6 @@ export default function Contact({ locale }: ContactProps) {
         alert(data.message || 'Забагато заявок. Спробуйте пізніше.');
         setStatus('idle');
       } else {
-        const errorText = await response.text();
-        console.error('Contact API error:', response.status, errorText);
         setStatus('error');
       }
     } catch {
