@@ -96,12 +96,17 @@ async function checkRateLimit(ip: string): Promise<{ allowed: boolean; remaining
 async function checkDuplicate(submissionId: string | null): Promise<boolean> {
   if (!submissionId || !redis) return false;
   
-  const dupKey = `submission:${submissionId}`;
-  const exists = await redis.get(dupKey);
-  if (exists) return true;
-  
-  await redis.set(dupKey, '1', { ex: 60 });
-  return false;
+  try {
+    const dupKey = `submission:${submissionId}`;
+    const exists = await redis.get(dupKey);
+    if (exists) return true;
+    
+    await redis.set(dupKey, '1', { ex: 60 });
+    return false;
+  } catch {
+    // Redis unavailable — allow submission
+    return false;
+  }
 }
 
 // Main controller
