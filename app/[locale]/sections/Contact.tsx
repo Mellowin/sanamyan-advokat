@@ -188,8 +188,8 @@ export default function Contact({ locale }: ContactProps) {
         <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
           <div className="space-y-8">
             <div className="flex items-center gap-4">
-              <img src="/icons/phone.png" alt="" className="w-32 h-32 object-contain" />
-              <div>
+              <img src="/icons/phone.png" alt="" className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 object-contain shrink-0" />
+              <div className="min-w-0 break-words">
                 <div className="text-sm text-gray-400">{t.phone}</div>
                 <button 
                   onClick={handlePhoneClick}
@@ -219,16 +219,16 @@ export default function Contact({ locale }: ContactProps) {
             </div>
             
             <div className="flex items-center gap-4">
-              <img src="/icons/email.png" alt="" className="w-32 h-32 object-contain" />
-              <div>
+              <img src="/icons/email.png" alt="" className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 object-contain shrink-0" />
+              <div className="min-w-0 break-words">
                 <div className="text-sm text-gray-400">{t.email}</div>
                 <a href="mailto:OSanamyan@ukr.net" className="text-xl font-bold hover:text-amber-500 transition-colors">OSanamyan@ukr.net</a>
               </div>
             </div>
             
             <div className="flex items-center gap-4">
-              <img src="/icons/location.png" alt="" className="w-32 h-32 object-contain" />
-              <div>
+              <img src="/icons/location.png" alt="" className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 object-contain shrink-0" />
+              <div className="min-w-0 break-words">
                 <div className="text-sm text-gray-400">{t.address}</div>
                 <div className="text-xl font-bold">{t.addressValue}</div>
               </div>
@@ -237,36 +237,36 @@ export default function Contact({ locale }: ContactProps) {
             {/* Мессенджеры */}
             <div className="pt-4">
               <div className="text-sm text-gray-400 mb-3">{t.messengers}</div>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 {/* Telegram */}
                 <a 
                   href={`https://t.me/+${phoneNumber}`}
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-32 h-32 hover:scale-110 transition-transform"
+                  className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 hover:scale-110 transition-transform"
                   title="Telegram"
                 >
-                  <img src="/icons/telegram.png" alt="Telegram" className="w-32 h-32 object-contain" />
+                  <img src="/icons/telegram.png" alt="Telegram" className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 object-contain" />
                 </a>
                 {/* WhatsApp */}
                 <a 
                   href={`https://wa.me/${phoneNumber}`}
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-32 h-32 hover:scale-110 transition-transform"
+                  className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 hover:scale-110 transition-transform"
                   title="WhatsApp"
                 >
-                  <img src="/icons/whatsapp.png" alt="WhatsApp" className="w-32 h-32 object-contain" />
+                  <img src="/icons/whatsapp.png" alt="WhatsApp" className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 object-contain" />
                 </a>
                 {/* Viber */}
                 <a 
                   href={`viber://chat?number=%2B${phoneNumber}`}
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-32 h-32 hover:scale-110 transition-transform"
+                  className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 hover:scale-110 transition-transform"
                   title="Viber"
                 >
-                  <img src="/icons/viber.png" alt="Viber" className="w-32 h-32 object-contain" />
+                  <img src="/icons/viber.png" alt="Viber" className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 object-contain" />
                 </a>
               </div>
             </div>
@@ -276,7 +276,7 @@ export default function Contact({ locale }: ContactProps) {
             </div>
           </div>
 
-          <div className="bg-white text-slate-900 p-8 rounded-2xl">
+          <div className="bg-white text-slate-900 p-6 sm:p-8 rounded-2xl">
             <h3 className="text-2xl font-bold mb-2">{t.formTitle}</h3>
             <p className="text-gray-600 mb-6">{t.formSubtitle}</p>
             
