@@ -3,7 +3,7 @@ import { SiteContent } from './types';
 export const en: SiteContent = {
   metadata: {
     title: 'Legal Support in Ukraine for Clients Abroad | Olga Sanamyan',
-    description: 'Ukrainian lawyers assisting clients in the United States, Canada, Europe and other countries. Inheritance, property, family, criminal, military and traffic accident matters — representation throughout Ukraine.',
+    description: 'Ukrainian lawyers for clients abroad: inheritance, property, family, criminal and military matters, with representation throughout Ukraine.',
   },
   header: {
     name: 'Olga Sanamyan',
@@ -22,7 +22,7 @@ export const en: SiteContent = {
     description: '20+ years of practice. 5,000+ clients.',
     ctaPrimary: 'Request a Consultation',
     ctaSecondary: 'Message Us',
-    ctaSecondaryHref: '#contact',
+    ctaSecondaryHref: '#messengers',
     phone: '+38(098)720-83-01',
     phone2: '+38(050)929-53-74',
     formTitle: 'Request a Consultation',

@@ -59,6 +59,7 @@ export default function Hero({ locale }: HeroProps) {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Submission-ID': submissionId,
+                    'X-Locale': locale,
                 },
                 body: JSON.stringify({
                     ...formData,

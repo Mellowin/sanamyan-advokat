@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { SubmissionService } from '@/lib/services/submission';
 import { Redis } from '@upstash/redis';
 import logger, { createRequestLogger, logAPIRequest, logAPIResponse } from '@/lib/logger';
+import { isLocale } from '@/lib/i18n/config';
 
 // Redis initialization
 let redis: Redis | null = null;
@@ -34,7 +35,7 @@ function getCorsHeaders(origin: string | null, requestId?: string): Record<strin
   const headers: Record<string, string> = {
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, X-Submission-ID',
+    'Access-Control-Allow-Headers': 'Content-Type, X-Submission-ID, X-Locale',
     'Access-Control-Max-Age': '86400',
   };
   if (requestId) {
@@ -141,10 +142,9 @@ export async function handleContactRequest(request: NextRequest): Promise<NextRe
       );
     }
 
-    // Parse body (нужен locale для локализованных сообщений об ошибках)
-    const body = await request.json();
-    let { name, message } = body;
-    const { phone, locale } = body;
+    // Locale из заголовка (для локализованных сообщений до парсинга body)
+    const headerLocale = request.headers.get('x-locale');
+    const locale = headerLocale && isLocale(headerLocale) ? headerLocale : 'ua';
 
     // Rate limit check
     const rateLimit = await checkRateLimit(ip);
@@ -159,7 +159,7 @@ export async function handleContactRequest(request: NextRequest): Promise<NextRe
       return NextResponse.json(
         {
           error: 'Rate limit exceeded',
-          message: rateLimitMessages[locale] || rateLimitMessages.ua,
+          message: rateLimitMessages[locale],
           retryAfter: rateLimit.resetIn
         },
         {
@@ -168,6 +168,11 @@ export async function handleContactRequest(request: NextRequest): Promise<NextRe
         }
       );
     }
+
+    // Parse body
+    const body = await request.json();
+    let { name, message } = body;
+    const { phone } = body;
 
     // Validation
     if (checkXss(name) || checkXss(message || '')) {
