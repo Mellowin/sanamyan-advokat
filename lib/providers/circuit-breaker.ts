@@ -33,15 +33,33 @@ export class CircuitBreaker {
   private get lastFailureKey() { return `cb:${this.name}:lastFailure`; }
   private get successesKey() { return `cb:${this.name}:successes`; }
 
+  // Все обращения к Redis обёрнуты в try-catch: при недоступности Redis
+  // breaker деградирует до безопасных значений и не роняет основной запрос.
+  private async safe<T>(op: () => Promise<T>, fallback: T): Promise<T> {
+    if (!this.redis) return fallback;
+    try {
+      return await op();
+    } catch (error) {
+      logger.warn({
+        event: 'circuit_breaker_redis_error',
+        name: this.name,
+        error: (error as Error).message
+      }, 'Circuit breaker Redis operation failed, using fallback');
+      return fallback;
+    }
+  }
+
   async getState(): Promise<CircuitState> {
-    if (!this.redis) return 'CLOSED';
-    const state = await this.redis.get(this.stateKey) as CircuitState;
-    return state || 'CLOSED';
+    return this.safe(async () => {
+      const state = await this.redis!.get(this.stateKey) as CircuitState;
+      return state || 'CLOSED';
+    }, 'CLOSED');
   }
 
   async setState(state: CircuitState): Promise<void> {
-    if (!this.redis) return;
-    await this.redis.set(this.stateKey, state, { ex: 86400 }); // TTL 24 часа
+    await this.safe(async () => {
+      await this.redis!.set(this.stateKey, state, { ex: 86400 }); // TTL 24 часа
+    }, undefined);
     logger.info({ 
       event: 'circuit_breaker_state_change', 
       name: this.name, 
@@ -50,50 +68,58 @@ export class CircuitBreaker {
   }
 
   async getFailures(): Promise<number> {
-    if (!this.redis) return 0;
-    const failures = await this.redis.get(this.failuresKey);
-    return (failures as number) || 0;
+    return this.safe(async () => {
+      const failures = await this.redis!.get(this.failuresKey);
+      return (failures as number) || 0;
+    }, 0);
   }
 
   async incrementFailures(): Promise<number> {
-    if (!this.redis) return 1;
-    const failures = await this.redis.incr(this.failuresKey);
-    await this.redis.expire(this.failuresKey, 86400);
-    return failures;
+    return this.safe(async () => {
+      const failures = await this.redis!.incr(this.failuresKey);
+      await this.redis!.expire(this.failuresKey, 86400);
+      return failures;
+    }, 1);
   }
 
   async resetFailures(): Promise<void> {
-    if (!this.redis) return;
-    await this.redis.del(this.failuresKey);
+    await this.safe(async () => {
+      await this.redis!.del(this.failuresKey);
+    }, undefined);
   }
 
   async getSuccesses(): Promise<number> {
-    if (!this.redis) return 0;
-    const successes = await this.redis.get(this.successesKey);
-    return (successes as number) || 0;
+    return this.safe(async () => {
+      const successes = await this.redis!.get(this.successesKey);
+      return (successes as number) || 0;
+    }, 0);
   }
 
   async incrementSuccesses(): Promise<number> {
-    if (!this.redis) return 1;
-    const successes = await this.redis.incr(this.successesKey);
-    await this.redis.expire(this.successesKey, 86400);
-    return successes;
+    return this.safe(async () => {
+      const successes = await this.redis!.incr(this.successesKey);
+      await this.redis!.expire(this.successesKey, 86400);
+      return successes;
+    }, 1);
   }
 
   async resetSuccesses(): Promise<void> {
-    if (!this.redis) return;
-    await this.redis.del(this.successesKey);
+    await this.safe(async () => {
+      await this.redis!.del(this.successesKey);
+    }, undefined);
   }
 
   async getLastFailureTime(): Promise<number> {
-    if (!this.redis) return 0;
-    const time = await this.redis.get(this.lastFailureKey);
-    return (time as number) || 0;
+    return this.safe(async () => {
+      const time = await this.redis!.get(this.lastFailureKey);
+      return (time as number) || 0;
+    }, 0);
   }
 
   async setLastFailureTime(): Promise<void> {
-    if (!this.redis) return;
-    await this.redis.set(this.lastFailureKey, Date.now(), { ex: 86400 });
+    await this.safe(async () => {
+      await this.redis!.set(this.lastFailureKey, Date.now(), { ex: 86400 });
+    }, undefined);
   }
 
   // Проверить, можно ли выполнять запрос
