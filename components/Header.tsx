@@ -3,40 +3,19 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { getContent } from '@/lib/content';
+import { locales } from '@/lib/i18n/config';
 
 interface HeaderProps {
   locale: string;
 }
 
-const content = {
-  ua: {
-    name: 'Санамян Ольга Олегівна',
-    nav: [
-      { name: 'Послуги', href: '#services' },
-      { name: 'Чому ми', href: '#whyus' },
-      { name: 'FAQ', href: '#faq' },
-      { name: 'Контакти', href: '#contact' },
-    ],
-  },
-  ru: {
-    name: 'Санамян Ольга Олеговна',
-    nav: [
-      { name: 'Услуги', href: '#services' },
-      { name: 'Почему мы', href: '#whyus' },
-      { name: 'FAQ', href: '#faq' },
-      { name: 'Контакты', href: '#contact' },
-    ],
-  },
-};
-
 export default function Header({ locale }: HeaderProps) {
   const pathname = usePathname();
-  const otherLocale = locale === 'ua' ? 'ru' : 'ua';
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+
   const pathWithoutLocale = pathname.replace(`/${locale}`, '') || '/';
-  const switchLocalePath = `/${otherLocale}${pathWithoutLocale}`;
-  const t = content[locale as keyof typeof content] || content.ua;
+  const t = getContent(locale).header;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800">
@@ -60,17 +39,23 @@ export default function Header({ locale }: HeaderProps) {
             ))}
           </nav>
 
-          {/* Правая часть: язык + бургер */}
+          {/* Правая часть: языки + бургер */}
           <div className="shrink-0 flex items-center gap-2 sm:gap-4">
-            {/* Переключатель языка */}
-            <div className="flex items-center gap-2">
-              <span className="text-gray-400 text-sm uppercase">{locale}</span>
-              <Link
-                href={switchLocalePath}
-                className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-white rounded-md text-sm font-medium transition-colors border border-slate-700"
-              >
-                {otherLocale === 'ua' ? 'UA' : 'RU'}
-              </Link>
+            {/* Переключатель языков */}
+            <div className="flex items-center gap-1 sm:gap-2">
+              {locales.map((l) => (
+                <Link
+                  key={l}
+                  href={`/${l}${pathWithoutLocale}`}
+                  className={`px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm font-medium uppercase transition-colors border ${
+                    l === locale
+                      ? 'bg-amber-500 text-slate-900 border-amber-500'
+                      : 'bg-slate-800 hover:bg-slate-700 text-white border-slate-700'
+                  }`}
+                >
+                  {l}
+                </Link>
+              ))}
             </div>
 
             {/* Бургер-меню для мобильных */}

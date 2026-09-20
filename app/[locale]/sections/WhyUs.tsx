@@ -1,28 +1,11 @@
+import { getContent } from '@/lib/content';
+
 interface WhyUsProps {
   locale: string;
 }
 
-const content = {
-  ua: {
-    title: 'Чому обирають нас',
-    items: [
-      { icon: '/icons/target.png', title: 'Чесна оцінка перспектив', desc: 'Чесно оцінюємо перспективи справи до початку роботи' },
-      { icon: '/icons/communication.png', title: 'Зрозуміла комунікація', desc: 'Пояснюємо ситуацію зрозумілою мовою та тримаємо клієнта в курсі справи' },
-      { icon: '/icons/moneybag.png', title: 'Прозора вартість', desc: 'Формат співпраці та вартість обговорюються до початку роботи' }
-    ]
-  },
-  ru: {
-    title: 'Почему выбирают нас',
-    items: [
-      { icon: '/icons/target.png', title: 'Честная оценка перспектив', desc: 'Честно оцениваем перспективы дела до начала работы' },
-      { icon: '/icons/communication.png', title: 'Понятная коммуникация', desc: 'Объясняем ситуацию понятным языком и держим клиента в курсе дела' },
-      { icon: '/icons/moneybag.png', title: 'Прозрачная стоимость', desc: 'Формат сотрудничества и стоимость обсуждаются до начала работы' }
-    ]
-  }
-};
-
 export default function WhyUs({ locale }: WhyUsProps) {
-  const t = content[locale as keyof typeof content] || content.ua;
+  const t = getContent(locale).whyUs;
 
   return (
     <section id="whyus" className="py-20 bg-slate-900 text-white">

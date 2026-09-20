@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-
-const locales = ['ua', 'ru'];
-const defaultLocale = 'ua';
+import { locales, defaultLocale } from './lib/i18n/config';
 
 export default function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;

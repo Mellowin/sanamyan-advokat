@@ -1,24 +1,11 @@
+import { getContent } from '@/lib/content';
+
 interface StatsProps {
   locale: string;
 }
 
-const stats = {
-  ua: [
-    { number: '20+', label: 'років досвіду' },
-    { number: '5000+', label: 'клієнтів' },
-    { number: '24/7', label: 'підтримка' },
-    { image: '/icons/confidentiality.png', label: 'конфіденційний супровід' }
-  ],
-  ru: [
-    { number: '20+', label: 'лет опыта' },
-    { number: '5000+', label: 'клиентов' },
-    { number: '24/7', label: 'поддержка' },
-    { image: '/icons/confidentiality.png', label: 'конфиденциальное сопровождение' }
-  ]
-};
-
 export default function Stats({ locale }: StatsProps) {
-  const items = stats[locale as keyof typeof stats] || stats.ua;
+  const items = getContent(locale).stats;
 
   return (
     <section className="bg-amber-500 py-16">
@@ -28,6 +15,8 @@ export default function Stats({ locale }: StatsProps) {
             <div key={index} className="text-slate-900">
               {item.image ? (
                 <img src={item.image} alt="" className="h-20 md:h-24 w-auto mx-auto mb-2 object-contain" />
+              ) : item.compact ? (
+                <div className="text-2xl sm:text-3xl md:text-4xl leading-tight font-bold mb-2 break-words">{item.number}</div>
               ) : (
                 <div className="text-5xl sm:text-6xl md:text-8xl leading-none font-bold mb-2">{item.number}</div>
               )}

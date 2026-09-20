@@ -141,27 +141,33 @@ export async function handleContactRequest(request: NextRequest): Promise<NextRe
       );
     }
 
+    // Parse body (нужен locale для локализованных сообщений об ошибках)
+    const body = await request.json();
+    let { name, message } = body;
+    const { phone, locale } = body;
+
     // Rate limit check
     const rateLimit = await checkRateLimit(ip);
     if (!rateLimit.allowed) {
       reqLogger.warn({ event: 'rate_limit_exceeded', ip, resetIn: rateLimit.resetIn }, 'Rate limit exceeded');
+      const minutes = Math.ceil(rateLimit.resetIn / 60);
+      const rateLimitMessages: Record<string, string> = {
+        ua: `Забагато заявок. Спробуйте через ${minutes} хвилин.`,
+        ru: `Слишком много заявок. Попробуйте через ${minutes} минут.`,
+        en: `Too many requests. Please try again in ${minutes} minutes.`,
+      };
       return NextResponse.json(
-        { 
+        {
           error: 'Rate limit exceeded',
-          message: `Забагато заявок. Спробуйте через ${Math.ceil(rateLimit.resetIn / 60)} хвилин.`,
+          message: rateLimitMessages[locale] || rateLimitMessages.ua,
           retryAfter: rateLimit.resetIn
         },
-        { 
+        {
           status: 429,
           headers: { ...corsHeaders, 'Retry-After': String(rateLimit.resetIn) }
         }
       );
     }
-
-    // Parse body
-    const body = await request.json();
-    let { name, message } = body;
-    const { phone, locale } = body;
 
     // Validation
     if (checkXss(name) || checkXss(message || '')) {

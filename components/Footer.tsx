@@ -1,20 +1,11 @@
+import { getContent } from '@/lib/content';
+
 interface FooterProps {
   locale: string;
 }
 
-const content = {
-  ua: {
-    rights: '© 2026 Адвокатське об\'єднання. Всі права захищені.',
-    privacy: 'Політика конфіденційності'
-  },
-  ru: {
-    rights: '© 2026 Адвокатское объединение. Все права защищены.',
-    privacy: 'Политика конфиденциальности'
-  }
-};
-
 export default function Footer({ locale }: FooterProps) {
-  const t = content[locale as keyof typeof content] || content.ua;
+  const t = getContent(locale).footer;
 
   return (
     <footer className="bg-slate-950 text-gray-500 py-6">

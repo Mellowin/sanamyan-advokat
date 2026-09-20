@@ -91,7 +91,7 @@ export class TelegramProvider {
 
 👤 <b>Ім'я:</b> ${name}
 📞 <b>Телефон:</b> ${phone}
-🌐 <b>Мова:</b> ${locale === 'ua' ? 'Українська' : 'Русский'}
+🌐 <b>Мова:</b> ${locale === 'ua' ? 'Українська' : locale === 'en' ? 'English' : 'Русский'}
 
 💬 <b>Повідомлення:</b>
 ${message || 'Не вказано'}

@@ -1,50 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { getContent } from '@/lib/content';
 
 interface HeroProps {
     locale: string;
 }
 
-const content = {
-    ua: {
-        title: "Адвокатське об'єднання Ю.Р.С.П. у Києві",
-        subtitle: 'Кримінальне право • Сімейне право • Спадкове право • Військове право • ДТП',
-        description: '20+ років практики. 5000+ клієнтів.',
-        ctaPrimary: 'Записатися на консультацію',
-        ctaSecondary: 'Подзвонити',
-        phone: '+38(098)720-83-01',
-        phone2: '+38(050)929-53-74',
-        formTitle: 'Замовити консультацію',
-        formName: 'Ваше ім\'я',
-        formPhone: 'Телефон',
-        formMessage: 'Опишіть ситуацію',
-        formSubmit: 'Відправити',
-        formSending: 'Відправка...',
-        formSuccess: 'Дякуємо! Ми отримали заявку.',
-        formError: 'Помилка. Спробуйте ще раз або зателефонуйте.'
-    },
-    ru: {
-        title: 'Адвокатское объединение Ю.Р.С.П. в Киеве',
-        subtitle: 'Уголовное право • Семейное право • Наследственное право • Военное право • ДТП',
-        description: '20+ лет практики. 5000+ клиентов.',
-        ctaPrimary: 'Записаться на консультацию',
-        ctaSecondary: 'Позвонить',
-        phone: '+38(098)720-83-01',
-        phone2: '+38(050)929-53-74',
-        formTitle: 'Заказать консультацию',
-        formName: 'Ваше имя',
-        formPhone: 'Телефон',
-        formMessage: 'Опишите ситуацию',
-        formSubmit: 'Отправить',
-        formSending: 'Отправка...',
-        formSuccess: 'Спасибо! Мы получили заявку.',
-        formError: 'Ошибка. Попробуйте еще раз или позвоните.'
-    }
-};
-
 export default function Hero({ locale }: HeroProps) {
-    const t = content[locale as keyof typeof content] || content.ua;
+    const t = getContent(locale).hero;
     const [showForm, setShowForm] = useState(false);
     const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
     const [formData, setFormData] = useState({
@@ -68,32 +32,28 @@ export default function Hero({ locale }: HeroProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         // Предотвращаем повторную отправку
         if (status === 'sending') return;
-        
+
         // Проверка телефона перед отправкой
         if (!isValidPhone(formData.phone)) {
-            alert(locale === 'ua' 
-                ? 'Введіть коректний номер телефону (тільки цифри, +, -, ())' 
-                : 'Введите корректный номер телефона (только цифры, +, -, ())');
+            alert(t.alertInvalidPhone);
             return;
         }
 
         // Проверка на XSS
         if (hasXss(formData.name) || hasXss(formData.message)) {
-            alert(locale === 'ua' 
-                ? 'Виявлено заборонені символи' 
-                : 'Обнаружены запрещенные символы');
+            alert(t.alertXss);
             return;
         }
-        
+
         setStatus('sending');
 
         try {
             // Генерируем уникальный ID для заявки
             const submissionId = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-            
+
             const response = await fetch('/api/contact', {
                 method: 'POST',
                 headers: {
@@ -116,7 +76,7 @@ export default function Hero({ locale }: HeroProps) {
             } else if (response.status === 429) {
                 // Rate limit exceeded
                 const data = await response.json();
-                alert(data.message || 'Забагато заявок. Спробуйте пізніше.');
+                alert(data.message || t.alertRateLimited);
                 setStatus('idle');
             } else {
                 setStatus('error');
@@ -133,13 +93,35 @@ export default function Hero({ locale }: HeroProps) {
         }));
     };
 
+    // UA/RU: звонок (моб.) или копирование номера (десктоп). EN: якорь на контакты.
+    const handleSecondaryClick = () => {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (isMobile) {
+            window.location.href = `tel:${t.phone.replace(/\D/g, '')}`;
+        } else {
+            const textarea = document.createElement('textarea');
+            textarea.value = t.phone;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                alert(t.alertCopied);
+            } catch {
+                alert(t.alertCopyFailed);
+            }
+            document.body.removeChild(textarea);
+        }
+    };
+
     return (
         <section className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center">
             <div className="container mx-auto px-4 py-20">
                 <div className="grid md:grid-cols-2 gap-12 items-center">
                     <div>
                         <div className="mb-4 text-amber-400 font-semibold tracking-wide uppercase text-sm">
-                            {locale === 'ua' ? 'Правовий захист' : 'Правовая защита'}
+                            {t.badge}
                         </div>
                         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight break-words">
                             {t.title}
@@ -147,6 +129,11 @@ export default function Hero({ locale }: HeroProps) {
                         <p className="text-2xl text-gray-300 mb-4">
                             {t.subtitle}
                         </p>
+                        {t.highlight && (
+                            <p className="text-xl text-amber-400 font-semibold mb-4">
+                                {t.highlight}
+                            </p>
+                        )}
                         <p className="text-gray-400 mb-8 text-lg">
                             {t.description}
                         </p>
@@ -160,32 +147,21 @@ export default function Hero({ locale }: HeroProps) {
                             >
                                 {t.ctaPrimary}
                             </button>
-                            <button
-                                onClick={() => {
-                                    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                                    if (isMobile) {
-                                        window.location.href = `tel:${t.phone.replace(/\D/g, '')}`;
-                                    } else {
-                                        // Копирование в буфер
-                                        const textarea = document.createElement('textarea');
-                                        textarea.value = t.phone;
-                                        textarea.style.position = 'fixed';
-                                        textarea.style.opacity = '0';
-                                        document.body.appendChild(textarea);
-                                        textarea.select();
-                                        try {
-                                            document.execCommand('copy');
-                                            alert(locale === 'ua' ? 'Номер скопійовано!' : 'Номер скопирован!');
-                                        } catch {
-                                            alert(locale === 'ua' ? 'Не вдалося скопіювати' : 'Не удалось скопировать');
-                                        }
-                                        document.body.removeChild(textarea);
-                                    }
-                                }}
-                                className="flex-1 border-2 border-white hover:bg-white hover:text-slate-900 text-white font-semibold px-4 sm:px-8 py-3 sm:py-4 rounded-lg transition-all text-sm sm:text-base"
-                            >
-                                {t.ctaSecondary}
-                            </button>
+                            {t.ctaSecondaryHref ? (
+                                <a
+                                    href={t.ctaSecondaryHref}
+                                    className="flex-1 border-2 border-white hover:bg-white hover:text-slate-900 text-white font-semibold px-4 sm:px-8 py-3 sm:py-4 rounded-lg transition-all text-sm sm:text-base text-center"
+                                >
+                                    {t.ctaSecondary}
+                                </a>
+                            ) : (
+                                <button
+                                    onClick={handleSecondaryClick}
+                                    className="flex-1 border-2 border-white hover:bg-white hover:text-slate-900 text-white font-semibold px-4 sm:px-8 py-3 sm:py-4 rounded-lg transition-all text-sm sm:text-base"
+                                >
+                                    {t.ctaSecondary}
+                                </button>
+                            )}
                         </div>
                     </div>
                     <div className="hidden md:block">
@@ -193,7 +169,7 @@ export default function Hero({ locale }: HeroProps) {
                             <div className="aspect-[2/3]">
                                 <img
                                     src="/Sanamyan_Yusupova.png"
-                                    alt={locale === 'ua' ? 'Адвокат' : 'Адвокат'}
+                                    alt={t.imageAlt}
                                     className="w-full h-full object-cover"
                                 />
                             </div>
@@ -207,7 +183,7 @@ export default function Hero({ locale }: HeroProps) {
                     <div className="bg-white text-slate-900 rounded-2xl p-8 max-w-md w-full">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-2xl font-bold">{t.formTitle}</h3>
-                            <button 
+                            <button
                                 onClick={() => {
                                     setShowForm(false);
                                     setStatus('idle');
@@ -225,15 +201,18 @@ export default function Hero({ locale }: HeroProps) {
                         ) : status === 'error' ? (
                             <div className="text-center py-8">
                                 <p className="text-red-600 font-semibold mb-4">{t.formError}</p>
-                                <button 
+                                <button
                                     onClick={() => setStatus('idle')}
                                     className="text-amber-600 underline hover:no-underline"
                                 >
-                                    {locale === 'ua' ? 'Спробувати ще раз' : 'Попробовать еще раз'}
+                                    {t.btnTryAgain}
                                 </button>
                             </div>
                         ) : (
                             <form onSubmit={handleSubmit} className="space-y-4">
+                                {t.formSubtitle && (
+                                    <p className="text-gray-600 text-sm">{t.formSubtitle}</p>
+                                )}
                                 <input
                                     type="text"
                                     name="name"
@@ -253,7 +232,7 @@ export default function Hero({ locale }: HeroProps) {
                                     required
                                     disabled={status === 'sending'}
                                     pattern="[\d\+\-\(\)\s]{10,}"
-                                    title={locale === 'ua' ? 'Тільки цифри, +, -, ()' : 'Только цифры, +, -, ()'}
+                                    title={t.titlePhoneHint}
                                     className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none disabled:bg-gray-100"
                                 />
                                 <textarea
@@ -275,7 +254,7 @@ export default function Hero({ locale }: HeroProps) {
                                         className="flex-1 py-3 border rounded-lg hover:bg-gray-100"
                                         disabled={status === 'sending'}
                                     >
-                                        {locale === 'ua' ? 'Скасувати' : 'Отмена'}
+                                        {t.btnCancel}
                                     </button>
                                     <button
                                         type="submit"
