@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getContent } from '@/lib/content';
 import { locales } from '@/lib/i18n/config';
 
@@ -13,8 +13,23 @@ interface HeaderProps {
 export default function Header({ locale }: HeaderProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [hash, setHash] = useState('');
+
+  useEffect(() => {
+    const syncHash = () => setHash(window.location.hash);
+    syncHash();
+    window.addEventListener('hashchange', syncHash);
+    return () => window.removeEventListener('hashchange', syncHash);
+  }, []);
 
   const pathWithoutLocale = pathname.replace(`/${locale}`, '') || '/';
+
+  const hashFor = (l: string) => {
+    if (l === 'en') return hash;
+    if (hash === '#messengers') return '#contact';
+    if (hash === '#how-it-works') return '';
+    return hash;
+  };
   const t = getContent(locale).header;
 
   return (
@@ -46,7 +61,7 @@ export default function Header({ locale }: HeaderProps) {
               {locales.map((l) => (
                 <Link
                   key={l}
-                  href={`/${l}${pathWithoutLocale}`}
+                  href={`/${l}${pathWithoutLocale}${hashFor(l)}`}
                   className={`px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm font-medium uppercase transition-colors border ${
                     l === locale
                       ? 'bg-amber-500 text-slate-900 border-amber-500'
